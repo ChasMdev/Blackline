@@ -1,0 +1,244 @@
+:root {
+    --accent-color: #37C7EE;
+    --accent-color-rgb: 55, 199, 238;
+}
+
+html, body, #root {
+    margin: 0;
+    padding: 0;
+    background: none;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    align-content: center;
+}
+
+.border {
+    position: absolute;
+    width: 902px;
+    height: 602px;
+    background-color: #2c2c2c;
+    border-radius: 11px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+    color: white;
+    overflow: hidden;
+    top:39px;
+}
+
+.app {
+    position: absolute;
+    width: 900px;
+    height: 600px;
+    background-color: #1d1d1d;
+    border-radius: 10px;
+    color: white;
+    overflow: hidden;
+    top: 1px;
+    left: 1px;
+}
+
+.glow-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  overflow: visible; /* Keep shadow visible */
+  z-index: 0;
+  pointer-events: none; /* Doesn't block interactions */
+}
+
+.glow-square {
+  width: 5px;
+  height: 5px;
+  top: -5px;
+  left: -5px;
+  position: absolute;
+  background-color: var(--accent-color);
+  border-radius: 2px;
+  box-shadow: 
+    -5px -5px 250px 270px rgba(var(--accent-color-rgb), 0.05), /* top-left glow */
+    0 0 8px rgba(var(--accent-color-rgb), 0.25);        /* diffuse glow */
+}
+
+.error-elements {
+    z-index: 99999;
+    width: 900px;
+    height: 559px;
+    left: 0px;
+    bottom: 0px;
+    position: absolute;
+    background-color: #00000073;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+.error-elements.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+.error-island.blacklisted {
+    background-color: #AF2F2FB3;
+    box-shadow: 0px 0px 20px 0px rgb(0 0 0 / 70%);
+    width: 296px !important;
+    border: 2px solid #AF2F2F;
+    position: absolute;
+    height: 126px;
+    left: 302px;
+    top: 217px;
+    border-radius: 6px;
+    position: absolute;
+    display: flex;
+    align-items: center;
+}
+.error-island.nokey {
+    background-color: #AF2F2FB3;
+    border: 2px solid #AF2F2F;
+    box-shadow: 0px 0px 20px 0px rgb(0 0 0 / 80%);
+    width: 296px !important;
+    position: absolute;
+    height: 112px;
+    left: 302px;
+    top: 224px;
+    border-radius: 6px;
+    position: absolute;
+    display: flex;
+}
+.error-island.serverdown {
+    background-color: #AF2F2FB3;
+    border: 2px solid #AF2F2F;
+    box-shadow: 0px 0px 20px 0px rgb(0 0 0 / 80%);
+    width: 296px !important;
+    position: absolute;
+    height: 102px;
+    left: 302px;
+    top: 229px;
+    border-radius: 6px;
+    position: absolute;
+    display: flex;
+}
+.error-island.token {
+    background-color: #AF2F2FB3;
+    border: 2px solid #AF2F2F;
+    box-shadow: 0px 0px 20px 0px rgb(0 0 0 / 80%);
+    width: 296px !important;
+    position: absolute;
+    height: 112px;
+    left: 302px;
+    top: 224px;
+    border-radius: 6px;
+    position: absolute;
+    display: flex;
+}
+.error-island.hwid {
+    background-color: #AF2F2FB3;
+    border: 2px solid #AF2F2F;
+    box-shadow: 0px 0px 20px 0px rgb(0 0 0 / 80%);
+    width: 296px !important;
+    position: absolute;
+    height: 88px;
+    left: 302px;
+    top: 236px;
+    border-radius: 6px;
+    position: absolute;
+    display: flex;
+}
+
+.error-icon {
+    color: #FF5555;
+    flex-shrink: 0;
+    left: 17px;
+    top: 17px;
+    position: absolute
+}
+.error-title {
+    font-size: 15px;
+    font-family: "Pretendard";
+    font-weight: 600;
+    color: #FFFFFF;
+    flex-grow: 1;
+    left: 57px;
+    top: 25px;
+    line-height: 14px;
+    position: absolute;
+}
+.error-info {
+    visibility: hidden;
+    position: absolute;
+    left: 17px;
+    right: 17px;
+    top: 57px;
+    line-height: 14px;
+    font-size: 12px;
+    font-family: "Pretendard";
+    font-weight: 600;
+    color: #A8A9AC;
+    flex-grow: 1;
+}
+.error-info.blacklisted {
+    visibility: visible;
+    position: absolute;
+    left: 17px;
+    right: 17px;
+    top: 57px;
+    line-height: 14px;
+    font-size: 12px;
+    font-family: "Pretendard";
+    font-weight: 600;
+    color: #A8A9AC;
+    flex-grow: 1;
+}
+.error-info.nokey {
+    visibility: visible;
+    position: absolute;
+    left: 17px;
+    right: 17px;
+    top: 57px;
+    line-height: 14px;
+    font-size: 12px;
+    font-family: "Pretendard";
+    font-weight: 600;
+    color: #A8A9AC;
+    flex-grow: 1;
+}
+.error-info.serverdown {
+    visibility: visible;
+    position: absolute;
+    left: 17px;
+    right: 17px;
+    top: 57px;
+    line-height: 14px;
+    font-size: 12px;
+    font-family: "Pretendard";
+    font-weight: 600;
+    color: #A8A9AC;
+    flex-grow: 1;
+}
+.error-info.token {
+    visibility: visible;
+    position: absolute;
+    left: 17px;
+    right: 17px;
+    top: 57px;
+    line-height: 14px;
+    font-size: 12px;
+    font-family: "Pretendard";
+    font-weight: 600;
+    color: #A8A9AC;
+    flex-grow: 1;
+}
+.error-info.hwid {
+    visibility: visible;
+    position: absolute;
+    left: 17px;
+    right: 17px;
+    top: 57px;
+    line-height: 14px;
+    font-size: 12px;
+    font-family: "Pretendard";
+    font-weight: 600;
+    color: #A8A9AC;
+    flex-grow: 1;
+}

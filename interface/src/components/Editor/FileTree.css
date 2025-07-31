@@ -1,0 +1,205 @@
+.file-tree {
+    width: 188px;
+    height: 460px !important;
+    bottom: 54px;
+    right: 10px;
+    background-color: #1f1f1f4D;
+    border-radius: 6px;
+    position: absolute;
+    border: 1px solid #2c2c2c;
+    pointer-events: none;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.file-tree-content {
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    pointer-events: auto;
+    white-space: nowrap;
+    padding: 5px;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.file-tree-content::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+}
+
+.file-tree-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.file-tree-content::-webkit-scrollbar-thumb {
+    background: #404040;
+    border-radius: 1px;
+}
+
+.file-tree-content::-webkit-scrollbar-thumb:hover {
+    background: #555555;
+}
+
+.file-tree-content::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+.folder-container {
+    width: max-content;
+    min-width: 100%;
+}
+
+.file-tree-folder {
+    display: flex;
+    align-items: center;
+    height: 18px;
+    gap: 4px;
+    width: max-content;
+    min-width: calc(100% - 10px);
+    background: none;
+    border: none;
+    color: #686868;
+    cursor: pointer;
+    padding-right: 5px;
+    margin-bottom: 6px;
+    pointer-events: auto;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: "Pretendard";
+    transition: color 130ms ease, opacity 300ms ease;
+    text-align: left;
+    opacity: 0;
+    animation: fadeIn 300ms ease forwards;
+    white-space: nowrap;
+}
+
+.file-tree-folder:hover {
+    color: white;
+}
+
+.chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 200ms ease;
+    flex-shrink: 0;
+}
+
+.chevron.expanded {
+    transform: rotate(90deg);
+}
+
+.folder-icon {
+    margin-left: 2px;
+    flex-shrink: 0;
+}
+
+.folder-content {
+    overflow: hidden;
+    transition: max-height 400ms ease, opacity 200ms ease;
+    max-height: 0;
+    opacity: 0;
+    width: max-content;
+    min-width: 100%;
+}
+
+.folder-content.expanded {
+    max-height: 1000px;
+    opacity: 1;
+}
+
+.file-tree-file {
+    display: flex;
+    align-items: center;
+    height: 18px;
+    margin-bottom: 6px;
+    gap: 6px;
+    padding-right: 5px;
+    pointer-events: auto;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: "Pretendard";
+    color: #686868;
+    transition: color 130ms ease, opacity 300ms ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    width: max-content;
+    opacity: 0;
+    animation: fadeIn 300ms ease forwards;
+    white-space: nowrap;
+}
+
+.file-tree-file:hover {
+    color: white;
+}
+
+.folder-content.closing .file-tree-folder,
+.folder-content.closing .file-tree-file {
+    animation: fadeOut 300ms ease forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+    }
+}
+
+.context-menu-explorer {
+  background: #1d1d1dfc;
+  border: 1px solid #2c2c2c;
+  border-radius: 3px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  min-width: 80px;
+  overflow: hidden;
+  font-family: 'Pretendard';
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+  padding: 0;
+}
+
+.context-menu-explorer li {
+  padding: 6px 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  color: #686868;
+  transition: color 130ms ease, background-color 130ms ease;;
+}
+
+.context-menu-explorer li:hover {
+  background-color: #333;
+  color: white;
+}
+
+.tab-rename-input-explorer {
+  flex: 1;
+  background: #333;
+  border: 1px solid #555;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-family: 'Pretendard';
+  font-weight: 600;
+  padding: 0px 4px;
+  margin-right: 0px;
+  border-radius: 2px;
+  outline: none;
+  min-width: 1px;
+  width: auto;
+}
+
+.tab-rename-input-explorer:focus {
+  border-color: #37C7EEF0;
+}
