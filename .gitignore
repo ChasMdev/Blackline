@@ -378,4 +378,5 @@ Module/Dependencies/cryptopp/lib/cryptopp.lib
 
 Module-old/
 
-filter-repo.py
+ModuleTest/
+InjectorTest/

@@ -12,17 +12,17 @@ function AppContent() {
     const { showAlert } = useAlert();
     const listenerSetup = useRef(false);
     const [phase, setPhase] = useState<"mainwindow" | "blacklisted" | "nokey" | "serverdown" | "hwid" | "token">("mainwindow");
-    const [_, setAccentColor] = useState("#37C7EE");
+    const [_, setAccentColor] = useState("#D1FFD4");
 
     // Get accent color with fallback chain (custom -> system -> default)
     async function getAccentColor() {
         try {
-            const color = await invoke('get_accent_color');
-            return color;
+            //const color = await invoke('get_accent_color');
+            //return color;
         } catch (error) {
-            console.error('Failed to get accent color:', error);
+            //console.error('Failed to get accent color:', error);
             // This shouldn't happen since we have fallbacks, but just in case
-            return { hex: '#37C7EE', r: 55, g: 199, b: 238 };
+            return { hex: '#D1FFD4', r: 209, g: 255, b: 212 };
         }
     }
 
@@ -159,7 +159,7 @@ function AppContent() {
           let data;
           let res;
           try {
-              res = await fetch("http://127.0.0.1:8000/token-login", {
+              res = await fetch("http://127.0.0.1:8000/auth/token-login", {
                   method: "POST",
                   headers: {
                       Authorization: token,
@@ -200,7 +200,7 @@ function AppContent() {
 
   return (
       <div className="border">
-          <div className="app">
+          <div className="mainapp">
               <div className="glow-container">
                   <div className="glow-square" />
               </div>
@@ -219,16 +219,21 @@ function AppContent() {
                   </div>
               </div>
           </div>
+          <div className="loadingpage">
+              <div className="topology"/>
+              <div className={"center-glow"}/>
+              <div className={"loading-title"}>BLACKLINE</div>
+          </div>
       </div>
   );
 }
 
 function App() {
-  return (
-    <AlertProvider>
-      <AppContent />
-    </AlertProvider>
-  );
+    return (
+        <AlertProvider>
+            <AppContent/>
+        </AlertProvider>
+    );
 }
 
 export default App;

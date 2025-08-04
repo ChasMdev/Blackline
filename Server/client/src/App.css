@@ -1,0 +1,27 @@
+@font-face {
+    font-family: 'Pretendard';
+    src: url('assets/PretendardVariable.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+html, body, #root {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    background: none;
+    overflow: hidden;
+    background-color: #1f1f1f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+}
+.App {
+    width: 100%;
+    background: #1f1f1f;
+    background-image: url("assets/Topology.png");
+    height: 100%;
+}

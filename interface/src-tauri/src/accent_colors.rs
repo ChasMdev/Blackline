@@ -37,7 +37,7 @@ impl AccentColor {
 }
 
 const REGISTRY_KEY_PATH: &str = "SOFTWARE\\Blackline"; // Replace with your app name
-const DEFAULT_ACCENT_COLOR: &str = "#37C7EE";
+const DEFAULT_ACCENT_COLOR: &str = "#D1FFD4";
 
 #[command]
 pub fn set_accent_color(hex_color: String) -> Result<(), String> {

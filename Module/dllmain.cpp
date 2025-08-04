@@ -31,7 +31,7 @@ void mainthread() {
 	//Raknet::Hook();
 	Environment::Init(Globals::ExploitThread);
 
-	Execution->Execute(InitLuaScript);
+	//Execution->Execute(InitLuaScript);
 	Taskscheduler->SetFPS(1000);
 
 	Communication::NamedPipe::InitializeNamePipe();
