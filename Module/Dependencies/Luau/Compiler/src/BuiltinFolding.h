@@ -5,11 +5,11 @@
 
 namespace Luau
 {
-namespace Compile
-{
+	namespace Compile
+	{
 
-Constant foldBuiltin(int bfid, const Constant* args, size_t count);
-Constant foldBuiltinMath(AstName index);
+		Constant foldBuiltin(int bfid, const Constant* args, size_t count);
+		Constant foldBuiltinMath(AstName index);
 
-} // namespace Compile
+	} // namespace Compile
 } // namespace Luau

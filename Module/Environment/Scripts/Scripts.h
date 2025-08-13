@@ -144,7 +144,7 @@ namespace HelperClass {
 		uintptr_t temp[0x4];
 		std::memset(temp, 0, sizeof(temp));
 
-		Roblox::RequestCode((uintptr_t)temp, scriptPtr);
+		//Roblox::RequestCode((uintptr_t)temp, scriptPtr);
 
 		uintptr_t bytecodePtr = temp[1];
 
@@ -296,9 +296,9 @@ namespace Scripts {
 		return 1;
 	};
 	int getgenv(lua_State* L) {
-		lua_State* exec_lua_State = Globals::ExploitThread;
-		lua_pushvalue(exec_lua_State, LUA_GLOBALSINDEX);
-		lua_xmove(exec_lua_State, L, 1);
+		lua_State* ExploitThread = Globals::ExploitThread;
+		lua_pushvalue(ExploitThread, LUA_GLOBALSINDEX);
+		lua_xmove(ExploitThread, L, 1);
 		return 1;
 	}
 	int getreg(lua_State* L) {
@@ -611,33 +611,20 @@ namespace Scripts {
 	}
 	inline int loadstring(lua_State* L) {
 		luaL_checktype(L, 1, LUA_TSTRING);
+		const auto sourceCode = lua_tostring(L, 1);
+		const auto chunkName = luaL_optstring(L, 2, "=");
 
-		const std::string source = lua_tostring(L, 1);
-		const std::string chunkname = luaL_optstring(L, 2, "=");
-
-		std::string script = Execution->CompileScript(source);
-
-		if (script[0] == '\0' || script.empty()) {
+		const auto compiledBytecode = Execution->CompileScript(sourceCode);
+		if (luau_load(L, chunkName, compiledBytecode.c_str(), compiledBytecode.length(), 0) != LUA_OK) {
 			lua_pushnil(L);
-			lua_pushstring(L, "Failed to compile script");
+			lua_pushvalue(L, -2);
 			return 2;
 		}
 
-		int result = Roblox::LuaVM__Load(L, &script, chunkname.data(), 0);
-		if (result != LUA_OK) {
-			std::string Error = luaL_checklstring(L, -1, nullptr);
-			lua_pop(L, 1);
+		const auto loadedClosure = lua_toclosure(L, -1);
+		Taskscheduler->ElevateProto(loadedClosure);
 
-			lua_pushnil(L);
-			lua_pushstring(L, Error.data());
-
-			return 2;
-		}
-
-		Closure* closure = clvalue(luaA_toobject(L, -1));
-
-		Taskscheduler->SetProtoCapabilities(closure->l.p);
-
+		//lua_setsafeenv(L, LUA_GLOBALSINDEX, false);
 		return 1;
 	}
 	inline int getgc(lua_State* L) {

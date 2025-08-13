@@ -7,54 +7,54 @@
 
 namespace Luau
 {
-namespace Compile
-{
-
-struct Constant
-{
-    enum Type
+    namespace Compile
     {
-        Type_Unknown,
-        Type_Nil,
-        Type_Boolean,
-        Type_Number,
-        Type_Vector,
-        Type_String,
-    };
 
-    Type type = Type_Unknown;
-    unsigned int stringLength = 0;
+        struct Constant
+        {
+            enum Type
+            {
+                Type_Unknown,
+                Type_Nil,
+                Type_Boolean,
+                Type_Number,
+                Type_Vector,
+                Type_String,
+            };
 
-    union
-    {
-        bool valueBoolean;
-        double valueNumber;
-        float valueVector[4];
-        const char* valueString = nullptr; // length stored in stringLength
-    };
+            Type type = Type_Unknown;
+            unsigned int stringLength = 0;
 
-    bool isTruthful() const
-    {
-        LUAU_ASSERT(type != Type_Unknown);
-        return type != Type_Nil && !(type == Type_Boolean && valueBoolean == false);
-    }
+            union
+            {
+                bool valueBoolean;
+                double valueNumber;
+                float valueVector[4];
+                const char* valueString = nullptr; // length stored in stringLength
+            };
 
-    AstArray<const char> getString() const
-    {
-        LUAU_ASSERT(type == Type_String);
-        return {valueString, stringLength};
-    }
-};
+            bool isTruthful() const
+            {
+                LUAU_ASSERT(type != Type_Unknown);
+                return type != Type_Nil && !(type == Type_Boolean && valueBoolean == false);
+            }
 
-void foldConstants(
-    DenseHashMap<AstExpr*, Constant>& constants,
-    DenseHashMap<AstLocal*, Variable>& variables,
-    DenseHashMap<AstLocal*, Constant>& locals,
-    const DenseHashMap<AstExprCall*, int>* builtins,
-    bool foldLibraryK,
-    LibraryMemberConstantCallback libraryMemberConstantCb,
-    AstNode* root
-);
+            AstArray<const char> getString() const
+            {
+                LUAU_ASSERT(type == Type_String);
+                return { valueString, stringLength };
+            }
+        };
 
-} // namespace Compile
+        void foldConstants(
+            DenseHashMap<AstExpr*, Constant>& constants,
+            DenseHashMap<AstLocal*, Variable>& variables,
+            DenseHashMap<AstLocal*, Constant>& locals,
+            const DenseHashMap<AstExprCall*, int>* builtins,
+            bool foldLibraryK,
+            LibraryMemberConstantCallback libraryMemberConstantCb,
+            AstNode* root
+        );
+
+    } // namespace Compile
 } // namespace Luau

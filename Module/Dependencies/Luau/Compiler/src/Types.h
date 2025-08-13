@@ -11,36 +11,36 @@
 
 namespace Luau
 {
-class BytecodeBuilder;
+    class BytecodeBuilder;
 
-struct BuiltinAstTypes
-{
-    BuiltinAstTypes(const char* hostVectorType)
-        : hostVectorType{{}, std::nullopt, AstName{hostVectorType}, std::nullopt, {}}
+    struct BuiltinAstTypes
     {
-    }
+        BuiltinAstTypes(const char* hostVectorType)
+            : hostVectorType{ {}, std::nullopt, AstName{hostVectorType}, std::nullopt, {} }
+        {
+        }
 
-    // AstName use here will not match the AstNameTable, but the way we use them here always forces a full string compare
-    AstTypeReference booleanType{{}, std::nullopt, AstName{"boolean"}, std::nullopt, {}};
-    AstTypeReference numberType{{}, std::nullopt, AstName{"number"}, std::nullopt, {}};
-    AstTypeReference stringType{{}, std::nullopt, AstName{"string"}, std::nullopt, {}};
-    AstTypeReference vectorType{{}, std::nullopt, AstName{"vector"}, std::nullopt, {}};
+        // AstName use here will not match the AstNameTable, but the way we use them here always forces a full string compare
+        AstTypeReference booleanType{ {}, std::nullopt, AstName{"boolean"}, std::nullopt, {} };
+        AstTypeReference numberType{ {}, std::nullopt, AstName{"number"}, std::nullopt, {} };
+        AstTypeReference stringType{ {}, std::nullopt, AstName{"string"}, std::nullopt, {} };
+        AstTypeReference vectorType{ {}, std::nullopt, AstName{"vector"}, std::nullopt, {} };
 
-    AstTypeReference hostVectorType;
-};
+        AstTypeReference hostVectorType;
+    };
 
-void buildTypeMap(
-    DenseHashMap<AstExprFunction*, std::string>& functionTypes,
-    DenseHashMap<AstLocal*, LuauBytecodeType>& localTypes,
-    DenseHashMap<AstExpr*, LuauBytecodeType>& exprTypes,
-    AstNode* root,
-    const char* hostVectorType,
-    const DenseHashMap<AstName, uint8_t>& userdataTypes,
-    const BuiltinAstTypes& builtinTypes,
-    const DenseHashMap<AstExprCall*, int>& builtinCalls,
-    const DenseHashMap<AstName, Compile::Global>& globals,
-    LibraryMemberTypeCallback libraryMemberTypeCb,
-    BytecodeBuilder& bytecode
-);
+    void buildTypeMap(
+        DenseHashMap<AstExprFunction*, std::string>& functionTypes,
+        DenseHashMap<AstLocal*, LuauBytecodeType>& localTypes,
+        DenseHashMap<AstExpr*, LuauBytecodeType>& exprTypes,
+        AstNode* root,
+        const char* hostVectorType,
+        const DenseHashMap<AstName, uint8_t>& userdataTypes,
+        const BuiltinAstTypes& builtinTypes,
+        const DenseHashMap<AstExprCall*, int>& builtinCalls,
+        const DenseHashMap<AstName, Compile::Global>& globals,
+        LibraryMemberTypeCallback libraryMemberTypeCb,
+        BytecodeBuilder& bytecode
+    );
 
 } // namespace Luau

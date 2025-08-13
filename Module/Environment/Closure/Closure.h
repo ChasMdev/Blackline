@@ -525,27 +525,28 @@ namespace Closures {
 		lua_pushstring(LS, hash.c_str());
 		return 1;
 	};
-	inline int newlclosure(lua_State* LS) {
-		luaL_checktype(LS, 1, LUA_TFUNCTION);
+	inline int newlclosure(lua_State* L) {
+		luaL_checktype(L, 1, LUA_TFUNCTION);
 
-		lua_newtable(LS);
-		lua_newtable(LS);
+		lua_newtable(L);
+		lua_newtable(L);
 
-		lua_pushvalue(LS, LUA_GLOBALSINDEX);
-		lua_setfield(LS, -2, "__index");
-		lua_setreadonly(LS, -1, true);
-		lua_setmetatable(LS, -2);
+		lua_pushvalue(L, LUA_GLOBALSINDEX);
+		lua_setfield(L, -2, "__index");
+		lua_setreadonly(L, -1, true);
+		lua_setmetatable(L, -2);
 
-		lua_pushvalue(LS, 1);
-		lua_setfield(LS, -2, "WRAPPED_LUAU_CLOSUREREF");
+		lua_pushvalue(L, 1);
+		lua_setfield(L, -2, "NEW_L_CLOSURE");
+		const auto code = "return NEW_L_CLOSURE(...)";
+		auto compiledBytecode = Execution->CompileScript(code);
+		luau_load(L, std::format("{}_newlclosurewrapper", "=").c_str(), compiledBytecode.c_str(),
+			compiledBytecode.length(), -1);
+		lua_getfenv(L, 1);
+		lua_setfenv(L, -3);
 
-		auto compiledBytecode = Execution->CompileScript("return WRAPPED_LUAU_CLOSUREREF(...)");
-
-		Roblox::LuaVM__Load(LS, &compiledBytecode, "=", -1);
-		lua_getfenv(LS, 1);
-		lua_setfenv(LS, -3);
-
-		Taskscheduler->ElevateProto(lua_toclosure(LS, -1));
+		const auto loadedClosure = lua_toclosure(L, -1);
+		Taskscheduler->ElevateProto(loadedClosure);
 
 		return 1;
 	}

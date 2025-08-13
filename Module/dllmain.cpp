@@ -9,17 +9,6 @@
 #include "Misc/Utils.hpp"
 #include "TaskScheduler/TaskScheduler.hpp"
 
-std::string InitLuaScript = (R"(
-	print("Blackline Loaded")
-	for name, value in pairs(getgenv()) do
-		if type(value) == "function" then
-			print(">>LOADED FUNCTION: " .. name)
-		end
-	end
-
-)");
-
-
 void mainthread() {
 	while (!Globals::ExploitThread) {
 		Sleep(100);
@@ -29,6 +18,7 @@ void mainthread() {
 	JobHooker::Hook("WaitingHybridScriptsJob", &JobHooker::InsertThread);
 	//InsertFunctionHook(MessageBoxA(0, 0, 0, 0));
 	//Raknet::Hook();
+
 	Environment::Init(Globals::ExploitThread);
 
 	//Execution->Execute(InitLuaScript);
@@ -41,12 +31,14 @@ void mainthread() {
 
 }
 
-BOOL APIENTRY DllMain( HMODULE hModule,
-					   DWORD  ul_reason_for_call,
-					   LPVOID lpReserved
-)
+extern "C" __declspec(dllexport) LRESULT CALLBACK NextHook(int nCode, WPARAM wParam, LPARAM lParam)
 {
-	if (ul_reason_for_call == DLL_PROCESS_ATTACH)
+	return CallNextHookEx(nullptr, nCode, wParam, lParam);
+}
+
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason, LPVOID)
+{
+	if (ul_reason == DLL_PROCESS_ATTACH)
 	{
 		DisableThreadLibraryCalls(hModule);
 		ControlFlowGuard::PatchModule(hModule);

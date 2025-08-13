@@ -12,7 +12,7 @@ function App() {
     const [phase, setPhase] = useState<"login" | "bootstrap" | "blacklisted" | "nokey">("login");
     const [progress, setProgress] = useState(0);
     const [downloading, setDownloading] = useState("Preparing...");
-    const [_, setAccentColor] = useState("#37C7EE");
+    const [_, setAccentColor] = useState("#D1FFD4");
 
     const gifOptions = ["/loader1.gif", "/loader2.gif"];
     const [backgroundGif] = useState(() => {
@@ -41,7 +41,7 @@ function App() {
         console.log(backgroundGif);
 
         if (backgroundGif === "/loader1.gif") {
-            return { hex: '#37C7EE', r: 55, g: 199, b: 238 };
+            return { hex: '#D1FFD4', r: 209, g: 255, b: 212 };
         } else {
             return { hex: '#D1FFD4', r: 209, g: 255, b: 212 };
         }
@@ -85,7 +85,7 @@ function App() {
         }
 
         try {
-            const res = await fetch("http://127.0.0.1:8000/login", {
+            const res = await fetch("http://18.170.1.254:8000/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -145,7 +145,7 @@ function App() {
 
             const hwid = await invoke("get_hwid");
 
-            const res = await fetch("http://127.0.0.1:8000/token-login", {
+            const res = await fetch("http://18.170.1.254:8000/auth/token-login", {
                 method: "POST",
                 headers: {
                     Authorization: token,

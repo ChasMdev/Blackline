@@ -116,8 +116,8 @@ void Environment::Init(lua_State* L) {
 	AddFunction(L, ("getreg"), Scripts::getreg);
 	AddFunction(L, ("getsenv"), Scripts::getsenv);
 	AddFunction(L, ("getrenv"), Scripts::getrenv);
-	AddFunction(L, ("getscriptbytecode"), Scripts::getscriptbytecode);
-	AddFunction(L, ("getscriptclosure"), Scripts::getscriptclosure);
+	//AddFunction(L, ("getscriptbytecode"), Scripts::getscriptbytecode);
+	//AddFunction(L, ("getscriptclosure"), Scripts::getscriptclosure); -- need luavmload anyways :)
 	AddFunction(L, ("getscripts"), Scripts::getscripts);
 	AddFunction(L, ("getfunctionhash"), Scripts::getfunctionhash);
 	AddFunction(L, ("getscripthash"), Scripts::getscripthash);
@@ -155,8 +155,8 @@ void Environment::Init(lua_State* L) {
 	lua_setfield(L, LUA_GLOBALSINDEX, ("http"));
 	AddFunction(L, ("request"), Http::request);
 	AddFunction(L, ("http_request"), Http::request);
-	AddFunction(L, ("decompile"), Http::decompile);
-	AddFunction(L, ("Decompile"), Http::decompile);
+	//AddFunction(L, ("decompile"), Http::decompile);
+	//AddFunction(L, ("Decompile"), Http::decompile);
 	AddFunction(L, ("gethwid"), Http::gethwid);
 	AddFunction(L, ("GetHwid"), Http::gethwid);
 	AddFunction(L, ("Gethwid"), Http::gethwid);

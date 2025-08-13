@@ -1,4 +1,3 @@
-// NamedPipe.cpp - Chunked, length-prefixed pipe receiver
 #include "NamedPipe.hpp"
 
 namespace Communication {

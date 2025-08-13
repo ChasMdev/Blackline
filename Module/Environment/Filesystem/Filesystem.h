@@ -47,6 +47,7 @@ namespace Filesystem
 		}
 
 		std::filesystem::path workspacePath = workspace / path;
+		const std::string chunkName = luaL_optstring(L, 2, "=");
 
 		FILE* file = fopen(workspacePath.string().c_str(), "rb");
 		if (!file) {
@@ -64,27 +65,13 @@ namespace Filesystem
 		size_t bytesread = fread(&content[0], 1, fileSize, file);
 		fclose(file);
 
-		std::string script = Execution->CompileScript(content);
-		if (script[0] == '\0' || script.empty()) {
-			lua_pushnil(L);
-			lua_pushstring(L, "Failed to compile script");
+		lua_getglobal(L, "loadstring");
+		lua_pushstring(L, content.c_str());
+		lua_pushstring(L, chunkName.c_str());
+		if (lua_pcall(L, 2, 2, 0) != LUA_OK)
 			return 2;
-		}
 
-		int result = Roblox::LuaVM__Load(L, &script, "=", 0);
-		if (result != LUA_OK) {
-			std::string Error = luaL_checklstring(L, -1, nullptr);
-			lua_pop(L, 1);
-
-			lua_pushnil(L);
-			lua_pushstring(L, Error.data());
-
-			return 2;
-		}
-
-		Closure* closure = clvalue(luaA_toobject(L, -1));
-
-		Taskscheduler->SetProtoCapabilities(closure->l.p);
+		lua_pop(L, 1);
 
 		Roblox::Task__Defer(L);
 
@@ -312,7 +299,6 @@ namespace Filesystem
 		luaL_checktype(L, 1, LUA_TSTRING);
 
 		std::string path = lua_tostring(L, 1);
-		const std::string chunkname = luaL_optstring(L, 2, "=");
 		std::replace(path.begin(), path.end(), '/', '\\');
 		if (path.find("..") != std::string::npos) {
 			lua_getglobal(L, "warn");
@@ -322,6 +308,7 @@ namespace Filesystem
 		}
 
 		std::filesystem::path workspacePath = workspace / path;
+		const auto chunkName = luaL_optstring(L, 2, "=");
 
 		FILE* file = fopen(workspacePath.string().c_str(), "rb");
 		if (!file) {
@@ -339,26 +326,13 @@ namespace Filesystem
 		size_t bytesread = fread(&content[0], 1, fileSize, file);
 		fclose(file);
 
-		std::string script = Execution->CompileScript(content);
-		if (script[0] == '\0' || script.empty()) {
-			lua_pushnil(L);
-			lua_pushstring(L, "Failed to compile script");
+		lua_getglobal(L, "loadstring");
+		lua_pushstring(L, content.c_str());
+		lua_pushstring(L, chunkName);
+		if (lua_pcall(L, 2, 2, 0) != LUA_OK)
 			return 2;
-		}
 
-		int result = Roblox::LuaVM__Load(L, &script, chunkname.data(), 0);
-		if (result != LUA_OK) {
-			std::string Error = luaL_checklstring(L, -1, nullptr);
-			lua_pop(L, 1);
-
-			lua_pushnil(L);
-			lua_pushstring(L, Error.data());
-
-			return 2;
-		}
-
-		Closure* closure = clvalue(luaA_toobject(L, -1));
-		Taskscheduler->SetProtoCapabilities(closure->l.p);
+		lua_pop(L, 1);
 		return 1;
 	}
 	inline int makefolder(lua_State* L) {

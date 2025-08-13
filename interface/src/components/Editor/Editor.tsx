@@ -78,7 +78,7 @@ export default function EditorGrid() {
             if (!token) return;
 
             const hwid = await invoke("get_hwid");
-            const res = await fetch("http://127.0.0.1:8000/auth/token-login", {
+            const res = await fetch("http://18.170.1.254:8000/auth/token-login", {
                 method: "POST",
                 headers: {
                     Authorization: token, // Now TypeScript knows this is a string

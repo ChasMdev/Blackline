@@ -16,14 +16,7 @@ function AppContent() {
 
     // Get accent color with fallback chain (custom -> system -> default)
     async function getAccentColor() {
-        try {
-            //const color = await invoke('get_accent_color');
-            //return color;
-        } catch (error) {
-            //console.error('Failed to get accent color:', error);
-            // This shouldn't happen since we have fallbacks, but just in case
-            return { hex: '#D1FFD4', r: 209, g: 255, b: 212 };
-        }
+        return { hex: '#D1FFD4', r: 209, g: 255, b: 212 };
     }
 
     // Set accent color
@@ -147,6 +140,7 @@ function AppContent() {
       await invoke("delete_token");
   };
 
+  // initialize loading screen n shit here
   useEffect(() => {
       (async () => {
           const token = await getToken();
@@ -159,7 +153,7 @@ function AppContent() {
           let data;
           let res;
           try {
-              res = await fetch("http://127.0.0.1:8000/auth/token-login", {
+              res = await fetch("http://18.170.1.254:8000/auth/token-login", {
                   method: "POST",
                   headers: {
                       Authorization: token,
@@ -207,22 +201,14 @@ function AppContent() {
               <AlertComponent/>
               <Titlebar/>
               <EditorGrid/>
-              <div className={`error-elements ${phase === "blacklisted" || phase === "nokey" || phase === "serverdown" || phase === "token" || phase === "hwid" ? "visible" : ""}`}>
-                  <div className={`error-island ${phase}`}>
-                      <CircleX size={30} className="error-icon"/>
-                      <span className="error-title">There was an error!</span>
-                      <span className={`error-info ${phase === "blacklisted" ? "blacklisted" : ""}`}>You have been blacklisted from using Blackline.  You can find out why and appeal it at our website, Blackline.gg or in our discord server, discord.gg/blackline</span>
-                      <span className={`error-info ${phase === "nokey" ? "nokey" : ""}`}>Your account is not authorized to use Blackline at the moment.  Please purchase a key before continuing.</span>
-                      <span className={`error-info ${phase === "serverdown" ? "serverdown" : ""}`}>The servers are currently experiencing issues.  Please try again later.</span>
-                      <span className={`error-info ${phase === "token" ? "token" : ""}`}>Your log-in has expired or you were not previously logged in.  Please re-launch the loader and log-in again.</span>
-                      <span className={`error-info ${phase === "hwid" ? "hwid" : ""}`}>Incorect HWID!</span>
-                  </div>
-              </div>
           </div>
           <div className="loadingpage">
-              <div className="topology"/>
               <div className={"center-glow"}/>
               <div className={"loading-title"}>BLACKLINE</div>
+              <svg width="38" height="38" viewBox="0 0 38 38" className="loading-wheel">
+                  <circle cx="19" cy="19" r="16.5" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeDasharray="43.6 60.4" opacity="0.8"/>
+              </svg>
+              <div className="info-box">Initializing components</div>
           </div>
       </div>
   );

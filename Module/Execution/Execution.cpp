@@ -15,17 +15,21 @@
 #include "TaskScheduler/TaskScheduler.hpp"
 using namespace Globals;
 
-class CBytecodeEncoder : public Luau::BytecodeEncoder {
-	inline void encode(uint32_t* Data, size_t Count) override {
-		for (auto i = 0u; i < Count;) {
-			auto& Opcode = *(uint8_t*)(Data + i);
-			i += Luau::getOpLength(LuauOpcode(Opcode));
-			Opcode *= 227;
+class LuauLoadByteCodeEncoderClass : public Luau::BytecodeEncoder {
+	void encode(uint32_t* data, size_t count) override {
+		for (auto i = 0; i < count;) {
+			uint8_t op = LUAU_INSN_OP(data[i]);
+			const auto oplen = Luau::getOpLength((LuauOpcode)op);
+			BYTE* OpCodeLookUpTable = reinterpret_cast<BYTE*>(Offsets::OpCodeTableLookup);
+			uint8_t new_op = op * 227;
+			new_op = OpCodeLookUpTable[new_op];
+			data[i] = (new_op) | (data[i] & ~0xff);
+			i += oplen;
 		}
 	}
 };
 
-CBytecodeEncoder encoder = {};
+LuauLoadByteCodeEncoderClass LuauLoadEncoder;
 uintptr_t capabilities = ~0ULL;
 
 void BExecution::SetProtoCapabilities(Proto* proto) {
@@ -37,107 +41,51 @@ void BExecution::SetProtoCapabilities(Proto* proto) {
 }
 
 std::string BExecution::CompileScript(const std::string source) {
-	std::string Bytecode = Luau::compile(source, { 1, 1, 2 }, { true, true }, &encoder);
+	Luau::CompileOptions options;
+	options.debugLevel = 1;
+	options.optimizationLevel = 1;
+	const char* mutableGlobals[] = {
+		"Game", "Workspace", "game", "plugin", "script", "shared", "workspace",
+		"_G", "_ENV", nullptr
+	};
+	options.mutableGlobals = mutableGlobals;
+	options.vectorLib = "Vector3";
+	options.vectorCtor = "new";
+	options.vectorType = "Vector3";
 
-	size_t DataSize = Bytecode.size();
-	size_t MaxSize = ZSTD_compressBound(DataSize);
-	std::vector<char> Buffer(MaxSize + 8);
-
-	memcpy(Buffer.data(), "RSB1", 4);
-	memcpy(Buffer.data() + 4, &DataSize, sizeof(DataSize));
-
-	size_t CompressedSize = ZSTD_compress(Buffer.data() + 8, MaxSize, Bytecode.data(), DataSize, ZSTD_maxCLevel());
-	size_t TotalSize = CompressedSize + 8;
-
-	uint32_t Key = XXH32(Buffer.data(), TotalSize, 42);
-	uint8_t* KeyBytes = (uint8_t*)&Key;
-
-	for (size_t i = 0; i < TotalSize; ++i) Buffer[i] ^= KeyBytes[i % 4] + i * 41;
-
-	return std::string(Buffer.data(), TotalSize);
+	return Luau::compile(source, options, {}, &LuauLoadEncoder);
 }
 
-void BExecution::Execute(std::string Source) {
-	lua_State* L = Globals::ExploitThread;
+void BExecution::Execute(std::string src) { 
+	lua_State* l = Globals::ExploitThread;
 
-	if (Source.empty() || !L) return;
+	const int originalTop = lua_gettop(l);
+	auto thread = lua_newthread(l);
+	lua_pop(l, 1);
+	Taskscheduler->SetThreadIdentity(thread, 8, MAXCAPABILITIES); // --> "CreateInstances" Permission in order to create new "LocalScript"
+	auto Source = CompileScript(src + "\nscript = Instance.new('LocalScript');");
+	if (luau_load(thread, "@Blackline", Source.c_str(), Source.length(), 0) != LUA_OK)
+	{
+		const char* err = lua_tostring(thread, -1);
+		Roblox::Print(2, err);
+		return;
+	}
+	Closure* closure = (Closure*)lua_topointer(thread, -1);
+	if (closure && closure->l.p)
+		Taskscheduler->SetProtoCapabilities(closure->l.p);
 
-	std::string Script = CompileScript(Source);
+	lua_getglobal(l, "task");
+	lua_getfield(l, -1, "defer");
+	lua_remove(l, -2);
+	lua_xmove(thread, l, 1);
 
-	if (Script[0] == '\0' || Script.empty()) {
-		Roblox::Print(3, "Failed to compile script");
+	if (lua_pcall(l, 1, 0, 0) != LUA_OK) {
+		const char* err = lua_tostring(l, -1);
+		if (err) Roblox::Print(2, err);
+		lua_pop(l, 1);
 		return;
 	}
 
-	lua_settop(L, 0);
-	lua_gc(L, LUA_GCSTOP, 0);
-
-	lua_State* Thread = lua_newthread(L);
-	luaL_sandboxthread(Thread);
-	if (!Thread) {
-		Roblox::Print(3, "Failed to create Lua thread");
-		lua_gc(L, LUA_GCRESTART, 0);
-		return;
-	}
-
-	lua_settop(Thread, 0);
-
-	lua_getglobal(Thread, "task");
-	if (lua_isnil(Thread, -1)) {
-		Roblox::Print(3, "Global 'task' not found");
-		lua_gc(L, LUA_GCRESTART, 0);
-		return;
-	}
-	lua_getfield(Thread, -1, "defer");
-
-	uintptr_t Userdata = (uintptr_t)Thread->userdata;
-	if (!Userdata) {
-		Roblox::Print(3, "Invalid userdata in thread");
-		lua_gc(L, LUA_GCRESTART, 0);
-		return;
-	}
-
-	uintptr_t identityPtr = Userdata + Offsets::ExtraSpace::Identity;
-	uintptr_t capabilitiesPtr = Userdata + Offsets::ExtraSpace::Capabilities;
-
-	if (identityPtr && capabilitiesPtr) {
-		*(uintptr_t*)identityPtr = 8;
-		*(int64_t*)capabilitiesPtr = ~0ULL;
-	}
-	else {
-		Roblox::Print(3, "Invalid memory addresses for identity or capabilities");
-		lua_gc(L, LUA_GCRESTART, 0);
-		return;
-	}
-
-	int LoadResult = Roblox::LuaVM__Load(Thread, &Script, "@Blackline", 0);
-	if (LoadResult != LUA_OK) {
-		std::string Error = luaL_checklstring(Thread, -1, nullptr);
-		lua_pop(Thread, 1);
-
-		Roblox::Print(3, Error.data());
-		lua_gc(L, LUA_GCRESTART, 0);
-		return;
-	}
-
-	Closure* closure = clvalue(luaA_toobject(Thread, -1));
-	if (!closure) {
-		Roblox::Print(3, "Failed to retrieve closure");
-		lua_gc(L, LUA_GCRESTART, 0);
-		return;
-	}
-
-	SetProtoCapabilities(closure->l.p);
-
-	if (lua_pcall(Thread, 1, 0, 0) != LUA_OK) {
-		std::string Error = luaL_checklstring(Thread, -1, nullptr);
-		lua_pop(Thread, 1);
-		Roblox::Print(3, Error.data());
-		lua_gc(L, LUA_GCRESTART, 0);
-		return;
-	}
-
-	lua_pop(Thread, 1);
-
-	lua_gc(L, LUA_GCRESTART, 0);
+	lua_settop(thread, 0);
+	lua_settop(l, originalTop);
 }
