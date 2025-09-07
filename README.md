@@ -35,12 +35,6 @@ Parts of this project are derived from or inspired by the work of others:
 - Injector forked from [Deni210's Roblox MMapper](https://github.com/Deni210/Roblox-MMap-Injector)  
 - Module heavily based on [Deni210's Module Source](https://github.com/Deni210/Module-Source)  
 
-For further learning and exploration, you may also find these projects useful:  
-
-- [Krnl (archived)](https://krnl.place/) – Widely known Roblox exploit (reference only)  
-- [Celery](https://github.com/example/celery) – Lightweight DLL injector framework  
-- [AnotherTool](https://github.com/example/another-tool) – Example reverse engineering reference  
-
 ---
 
 ## 📂 Repository Structure
